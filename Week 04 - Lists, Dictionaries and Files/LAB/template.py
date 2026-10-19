@@ -3,7 +3,7 @@ RECORD CHECK  -  my version
 ===========================
 
 Name  :
-Lane  :  AI / Cyber / IT      (delete two)
+Lane  : IT      (delete two)
 Date  :
 
 Run it:   python template.py
@@ -13,42 +13,58 @@ Delete these instructions as you replace them with your code.
 """
 
 # =================================================================== FUNCTIONS
-# 1. Bring back check_record(value, limit) and print_report(...) from Week 3
-#    (copy them, or rewrite them - either is fine). check_record returns
-#    difference, percent and status. print_report does all of the printing,
-#    nothing outside it should contain a print() of its own. Give each a
-#    one-line docstring.
 
-# your function(s) go here
+def check(value, limit):
+    """Works out the difference, percent and status and returns the values"""
+    difference = limit - value
+    percent = value / limit * 100
+    if percent >= 100:
+        status = "OVER LIMIT"
+    elif percent >= 90:
+        status = "WARNING"
+    else:
+        status = "OK"
+    return difference, percent, status
 
+def print_report(label, value, limit, difference, percent, status):
+    """Prints the report lines"""
+    print("=" * 34)
+    print(f"  RECORD CHECK  -  {label}")
+    print("=" * 34)
+    print(f" Value:      {value:>10.2f}")
+    print(f" Limit:      {limit:>10.2f}")
+    print(f" Difference: {difference:>10.2f}")
+    print(f" Percent:    {percent:>10.2f}")
+    print(f" Status:     {status:>10}")
+    print("=" * 34)
 
 # ====================================================================== STORE
-# 2. Get your records into a list of dicts, each shaped like:
-#        {"label": ..., "value": ..., "limit": ...}
-#
-#    Threshold : write the list directly in the code - at least 3 records.
-#    Typical   : instead, write a function load_records(path) that reads
-#                label,value,limit lines from a file and returns the list.
-#                Make your own data file, one record per line.
-#    Excellent : also write the results out to a new file (one line per
-#                record: label, status), as well as printing them.
+with open("records_file.txt", "w") as f:
+    f.write("srv-01,87,120\n")
+    f.write("srv-02,45,150\n")
+    f.write("srv-03,120,80\n")
 
-records = []   # replace with your code
-
-
+def load_records(path):
+    records = []
+    with open(path, "r") as f:
+        for line in f:
+            label, value, limit = line.strip().split(",")
+            records.append({"label": label, "value": float(value), "limit": float(limit)})         
+    return records
+    
+records = load_records("records_file.txt")
+print(records)
 # =============================================================== PROCESS + OUTPUT
-# 3. Loop over records. For each one, call check_record and print_report.
-#
-#    Excellent : also keep a running count of how many were OVER LIMIT, and
-#                print that once, after the loop ends.
 
-# your loop goes here
+over_limit = 0
 
+with open("records_results.txt", "w") as f:
+    for r in records:
+        difference, percent, status = check(r["value"], r["limit"])
+        f.write(f"{r["label"]}, {status}\n")
+        if status == "OVER LIMIT":
+            over_limit += 1
+
+print(f"Records over the limit: {over_limit}")
 
 # ==========================================================================
-# 4. Before you finish:
-#
-#    [ ] Run it and check every record's numbers are correct by hand
-#    [ ] If you are loading from a file, check what happens when the file
-#        does not exist - write the error down
-#    [ ] Check every function still does one job
