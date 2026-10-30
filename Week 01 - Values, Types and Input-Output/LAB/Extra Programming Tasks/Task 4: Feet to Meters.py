@@ -5,3 +5,6 @@ Ask the user for a value in feet, convert to meters using `1 ft = 0.305 m`, and 
 ```
 16.5 feet is 5.0325 meters
 """
+number = float(input("Enter a value in feet: "))
+meters = number * 0.305
+print(f"{number} feet is {meters} meters")
